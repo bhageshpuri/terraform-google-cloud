@@ -14,3 +14,13 @@ gcloud config list --format 'value(core.project)'
 #  If version 5 comes out, we will not automatically upgrade to that 
 
 # random provider is used to get random integers
+
+terraform fmt – can do indentation only in a row, it cant move } to next line if you put like 
+
+}}}
+
+You have to maintain the syntax like 
+
+}
+}
+}
