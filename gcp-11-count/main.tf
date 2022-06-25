@@ -16,7 +16,7 @@ data "google_compute_zones" "available" {
 
 
 resource "google_compute_instance" "web-servers" {
-  count        = 2
+  count        = var.instance_count
   name         = "tf-instance-${count.index}"
   machine_type = "n1-standard-1"
   zone         = "us-central1-c"
