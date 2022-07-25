@@ -1,0 +1,77 @@
+## Now it's time to deploy our local Consul server node
+## Download the consul executable from https://www.consul.io/downloads
+
+# Go into the consul subfolder in m4
+cd ../gcp-22-backend-consul-local/consul
+
+# Create a data subdirectory
+mkdir data
+
+# Move the console.exe file to /consul folder
+
+# Launch consul server instance
+.\consul.exe agent -bootstrap -config-file="config/consul-config.hcl" -bind="127.0.0.1"
+
+# Open a separate terminal window to run the rest of the commands
+# Make sure you are back in the m4/consul directory
+cd gcp-22-backend-consul-local/consul
+
+# Generate the bootstrap token
+.\consul.exe acl bootstrap
+
+# Set CONSUL_TOKEN to SecretID
+
+# Linux and MacOS
+export CONSUL_HTTP_TOKEN=SECRETID_VALUE
+
+# Windows
+$env:CONSUL_HTTP_TOKEN="e30171ae-7ed7-2394-13c7-d4c53340c4fc"
+
+# Open the following in a new browser:
+http://127.0.0.1:8500/ui/
+Click login and paste the secret id
+
+## Now we're going to configure Consul using Terraform 
+# Set up paths, policies, and tokens
+terraform init
+terraform plan -out consul.tfplan
+terraform apply consul.tfplan
+
+# Get token values for Mary and Sally and record them for later
+consul acl token read -id 55cbe7f5-0423-eef3-2f84-9ca855239beb
+consul acl token read -id ACCESSOR_ID_SALLY
+
+# Go back to the main gcp-22-backend-consul-local folder
+cd ..
+
+## Now let's set up the Consul backend and migrate the state
+
+gcp-1-instance\instance.tf
+
+# Copy the backend.tf file to gcp-1-instance
+cp backend.tf ..\gcp-1-instance\backend.tf
+
+# Move to the gcp-1-instance folder
+cd ..\gcp-1-instance
+
+# Now let's set the Consul token to Mary Moe
+# Replace SECRETID_VALUE with Mary Moe's secret ID
+# Linux and MacOS
+export CONSUL_HTTP_TOKEN=SECRETID_VALUE
+
+# Windows
+$env:CONSUL_HTTP_TOKEN="e30171ae-7ed7-2394-13c7-d4c53340c4fc"
+
+# Now we can initialize the backend config
+terraform init -backend-config="path=networking/state/globo-primary"
+
+# Now run terraform plan and apply
+terraform plan -out nat.tfplan
+terraform apply nat.tfplan
+
+# Open a second terminal
+# Export the Consul token again
+# Try to run a terraform plan
+terraform plan
+
+## You can stop your Consul instance 

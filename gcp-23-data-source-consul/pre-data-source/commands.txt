@@ -1,0 +1,5 @@
+cd pre-data-source
+terraform init
+terraform plan
+terraform apply 
+
